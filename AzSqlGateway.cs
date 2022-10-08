@@ -151,8 +151,24 @@ namespace AzSqlGateway
             {
                 foreach (string ip in SqlGateway.IPAddress)
                 {
-                    //TODO implementation
+
+                    WriteDebug("Testing connectivity to Gateway IP: " + ip);
+
+                    var ipEndPoint = new IPEndPoint(IPAddress.Parse(ip), 1433);
+                    TcpClient client = new TcpClient();
+                    try
+                    {
+                        client.Connect(ipEndPoint);
+
+                    }
+                    catch (System.Exception)
+                    {
+
+                        throw;
+                    }
+
                     ps.Commands.Clear();
+
                 } //end foreach
 
             } //end if
