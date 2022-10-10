@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Management.Automation;
-using HtmlAgilityPack;
 using System.Net;
 using System.Net.Sockets;
+using System.Management.Automation;
+using HtmlAgilityPack;
 
 namespace AzSqlGateway
 {
@@ -172,6 +172,7 @@ namespace AzSqlGateway
 
                     var ipEndPoint = new IPEndPoint(IPAddress.Parse(ip), 1433);
                     TcpClient client = new TcpClient();
+
                     try
                     {
                         client.Connect(ipEndPoint);
