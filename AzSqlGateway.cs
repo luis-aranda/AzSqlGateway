@@ -118,25 +118,21 @@ namespace AzSqlGateway
         protected override void ProcessRecord()
         {
             var result = new ImportAzSQLGateway().Invoke();
-            if (this.Region == null)
+            foreach (var row in result)
             {
-                foreach (var row in result)
+                if (this.Region == null)
                 {
                     WriteObject(row);
-                } // end foreach
-            }
-            else
-            {
-                foreach (var row in result)
+                }
+                else
                 {
                     if (((AzSqlGateway.SqlGateway)row).Region == Region)
                     {
                         WriteObject(row);
                     }
-                } // end foreach
-
-            } //end else
-
+                }
+                // filtering by region
+            } // end foreach
         } //end ProcessRecord
 
     } // end Get-AzSQLGateway
