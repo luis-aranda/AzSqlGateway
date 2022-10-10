@@ -108,6 +108,7 @@ namespace AzSqlGateway
     } // end GetAzSQLGateway
 
     [Cmdlet(VerbsCommon.Get, "AzSQLGateway")]
+    [OutputType(typeof(SqlGateway))]
     public class GetAzSQLGateway : Cmdlet
     {
         [Parameter(ParameterSetName = "ByRegion", Position = 0)]
@@ -119,7 +120,10 @@ namespace AzSqlGateway
             var result = new ImportAzSQLGateway().Invoke();
             if (this.Region == null)
             {
-                WriteObject(result);
+                foreach (var row in result)
+                {
+                    WriteObject(row);
+                } // end foreach
             }
             else
             {
@@ -137,7 +141,21 @@ namespace AzSqlGateway
 
     } // end Get-AzSQLGateway
 
+    public class SqlGatewayTestResult
+    {
+        public string Region { get; set; }
+        public string IpAddress { get; set; }
+        public bool TcpTestSucceded { get; set; }
+
+        public SqlGatewayTestResult(string Region, string IpAddress, bool TcpTestSucceded)
+        {
+            this.Region = Region;
+            this.IpAddress = IpAddress;
+            this.TcpTestSucceded = TcpTestSucceded;
+        }
+    }
     [Cmdlet(VerbsDiagnostic.Test, "AzSQLGateway")]
+    [OutputType(typeof(SqlGatewayTestResult))]
     public class TestAzSQLGateway : PSCmdlet
     {
         [Parameter(ParameterSetName = "ByObject", ValueFromPipeline = true)]
@@ -146,11 +164,13 @@ namespace AzSqlGateway
         protected override void ProcessRecord()
         {
             var ps = PowerShell.Create();
+            WriteDebug("Processing Region " + SqlGateway.Region);
 
             if (ParameterSetName == "ByObject")
             {
                 foreach (string ip in SqlGateway.IPAddress)
                 {
+                    bool TcpTestSucceded = true;
 
                     WriteDebug("Testing connectivity to Gateway IP: " + ip);
 
@@ -159,16 +179,15 @@ namespace AzSqlGateway
                     try
                     {
                         client.Connect(ipEndPoint);
-
                     }
                     catch (System.Exception)
                     {
-
-                        throw;
+                        TcpTestSucceded = false;
                     }
 
-                    ps.Commands.Clear();
+                    var result = new SqlGatewayTestResult(this.SqlGateway.Region, ip, TcpTestSucceded);
 
+                    WriteObject(result);
                 } //end foreach
 
             } //end if
