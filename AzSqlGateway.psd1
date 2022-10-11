@@ -30,7 +30,7 @@
     Copyright         = '(c) Luis Aranda. All rights reserved.'
 
     # Description of the functionality provided by this module
-    # Description = ''
+    Description       = 'This module helps retrieve the Azure SQL Database gateway ip addresses programatically via PowerShell'
 
     # Minimum version of the PowerShell engine required by this module
     # PowerShellVersion = ''
